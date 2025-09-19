@@ -2,12 +2,17 @@ name: Build and Release
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   release:
-    types: [ published ]
+    types: [published]
+
+# Permisos necesarios para crear releases
+permissions:
+  contents: write
+  packages: read
 
 env:
-  GO_VERSION: '1.21'
+  GO_VERSION: "1.21"
 
 jobs:
   # Build Windows
@@ -15,26 +20,26 @@ jobs:
     name: Build Windows
     runs-on: windows-latest
     steps:
-    - name: Checkout código
-      uses: actions/checkout@v4
+      - name: Checkout código
+        uses: actions/checkout@v4
 
-    - name: Setup Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
-    - name: Run tests
-      run: go test ./...
+      - name: Run tests
+        run: go test ./...
 
-    - name: Build Windows executable
-      run: |
-        go build -ldflags="-s -w" -o notifier.exe .
+      - name: Build Windows executable
+        run: |
+          go build -ldflags="-s -w -H=windowsgui" -o notifier.exe .
 
-    - name: Upload Windows artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: notifier-windows
-        path: notifier.exe
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: notifier-windows
+          path: notifier.exe
 
   # Release automático
   release:
@@ -43,42 +48,48 @@ jobs:
     runs-on: windows-latest
     if: github.ref == 'refs/heads/main'
     steps:
-    - name: Checkout código
-      uses: actions/checkout@v4
+      - name: Checkout código
+        uses: actions/checkout@v4
 
-    - name: Setup Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
-    - name: Build release binary
-      run: |
-        go build -ldflags="-s -w" -o notifier.exe .
+      - name: Build release binary
+        run: |
+          go build -ldflags="-s -w -H=windowsgui" -o notifier.exe .
 
-    - name: Generate release version
-      id: version
-      run: |
-        $date = Get-Date -Format "yyyy.MM.dd.HHmm"
-        $version = "v$date"
-        echo "version=$version" >> $env:GITHUB_OUTPUT
-        echo "Release version: $version"
+      - name: Generate release version
+        id: version
+        run: |
+          # Leer versión del archivo version.txt
+          $baseVersion = Get-Content version.txt -Raw
+          $baseVersion = $baseVersion.Trim()
 
-    - name: Create automatic release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ steps.version.outputs.version }}
-        name: "Release ${{ steps.version.outputs.version }}"
-        body: |
-          🚀 **Automated Release**
-          
-          **Changes:**
-          - Latest build from main branch
-          - Commit: ${{ github.sha }}
-          
-          **Download:**
-          - Windows executable: `notifier.exe`
-        files: notifier.exe
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Agregar timestamp para builds automáticos
+          $timestamp = Get-Date -Format "yyyyMMdd.HHmm"
+          $version = "v$baseVersion-$timestamp"
+
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "Release version: $version"
+
+      - name: Create automatic release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: "Release ${{ steps.version.outputs.version }}"
+          body: |
+            🚀 **Automated Release**
+
+            **Changes:**
+            - Latest build from main branch
+            - Commit: ${{ github.sha }}
+
+            **Download:**
+            - Windows executable: `notifier.exe`
+          files: notifier.exe
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,11 +2,12 @@ package service
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
+	"notifier/assets"
 	"notifier/config"
 	"notifier/types"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/gen2brain/beeep"
@@ -48,9 +49,9 @@ func checkNotifications() {
 				continue
 			}
 
-			// Enviar notificación con logo
-			logoPath, _ := filepath.Abs("assets/images/logo.jpeg")
-			if err := beeep.Notify(n.Titulo, n.Mensaje, logoPath); err != nil {
+			// Enviar notificación con icono embebido
+			iconPath := getEmbeddedIcon()
+			if err := beeep.Notify(n.Titulo, n.Mensaje, iconPath); err != nil {
 				log.Printf("Error enviando notificación: %v", err)
 				continue
 			}
@@ -68,4 +69,23 @@ func checkNotifications() {
 	if len(enviadas) > 100 {
 		enviadas = make(map[string]bool)
 	}
+}
+
+// getEmbeddedIcon crea un archivo temporal con el icono embebido
+func getEmbeddedIcon() string {
+	// Crear archivo temporal
+	tempFile, err := ioutil.TempFile("", "notifier_icon_*.ico")
+	if err != nil {
+		log.Printf("Error creando archivo temporal para icono: %v", err)
+		return ""
+	}
+	defer tempFile.Close()
+
+	// Escribir datos del icono
+	if _, err := tempFile.Write(assets.GetIcon()); err != nil {
+		log.Printf("Error escribiendo icono temporal: %v", err)
+		return ""
+	}
+
+	return tempFile.Name()
 }

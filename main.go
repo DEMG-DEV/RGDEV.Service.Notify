@@ -9,6 +9,7 @@
 //   - Notificaciones nativas del sistema operativo
 //   - Almacenamiento persistente en JSON
 //   - Sin dependencias gráficas complejas
+//   - Ejecución en background sin ventana de consola
 //
 // Uso básico:
 //
@@ -19,6 +20,10 @@
 //	./notifier.exe
 //
 // Para más información consulte el README.md
+
+//go:build windows
+// +build windows
+
 package main
 
 import (
@@ -27,11 +32,20 @@ import (
 	"notifier/config"
 	"notifier/service"
 	"notifier/ui"
+	"syscall"
 
 	"github.com/getlantern/systray"
 )
 
+var (
+	kernel32        = syscall.NewLazyDLL("kernel32.dll")
+	procFreeConsole = kernel32.NewProc("FreeConsole")
+)
+
 func main() {
+	// Ocultar ventana de consola en Windows
+	hideConsole()
+
 	// Inicializar configuración
 	if err := config.InitDataFile(); err != nil {
 		log.Fatalf("Error inicializando: %v", err)
@@ -39,6 +53,11 @@ func main() {
 
 	// Ejecutar aplicación de bandeja
 	systray.Run(onReady, onExit)
+}
+
+// hideConsole oculta la ventana de consola en Windows
+func hideConsole() {
+	procFreeConsole.Call()
 }
 
 func onReady() {
