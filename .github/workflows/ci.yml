@@ -41,7 +41,7 @@ jobs:
     name: Create Release
     needs: [build]
     runs-on: windows-latest
-    if: github.event_name == 'release'
+    if: github.ref == 'refs/heads/main'
     steps:
     - name: Checkout código
       uses: actions/checkout@v4
@@ -55,9 +55,30 @@ jobs:
       run: |
         go build -ldflags="-s -w" -o notifier.exe .
 
-    - name: Upload release asset
+    - name: Generate release version
+      id: version
+      run: |
+        $date = Get-Date -Format "yyyy.MM.dd.HHmm"
+        $version = "v$date"
+        echo "version=$version" >> $env:GITHUB_OUTPUT
+        echo "Release version: $version"
+
+    - name: Create automatic release
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: "Release ${{ steps.version.outputs.version }}"
+        body: |
+          🚀 **Automated Release**
+          
+          **Changes:**
+          - Latest build from main branch
+          - Commit: ${{ github.sha }}
+          
+          **Download:**
+          - Windows executable: `notifier.exe`
         files: notifier.exe
+        draft: false
+        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
