@@ -1,6 +1,6 @@
 module notifier
 
-go 1.19
+go 1.21
 
 require (
 	github.com/gen2brain/beeep v0.0.0-20230307103607-6e717729cb4f
