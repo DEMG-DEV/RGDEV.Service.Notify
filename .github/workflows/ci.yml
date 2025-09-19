@@ -58,11 +58,22 @@ jobs:
     - name: Generar reporte de cobertura
       run: go tool cover -html=coverage.out -o coverage.html
 
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4
       with:
         file: ./coverage.out
-        fail_ci_if_error: true
+        fail_ci_if_error: false
+        token: ${{ secrets.CODECOV_TOKEN }}
+        verbose: true
+      continue-on-error: true
+
+    - name: Upload coverage artifact (backup)
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: |
+          coverage.out
+          coverage.html
 
   # Security check
   security:
