@@ -1,9 +1,7 @@
-name: CI/CD Pipeline
+name: Build and Release
 
 on:
   push:
-    branches: [ main, develop ]
-  pull_request:
     branches: [ main ]
   release:
     types: [ published ]
@@ -12,102 +10,10 @@ env:
   GO_VERSION: '1.21'
 
 jobs:
-  # Test y Lint
-  test:
-    name: Test y Quality Check
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout código
-      uses: actions/checkout@v4
-
-    - name: Setup Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
-
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libayatana-appindicator3-dev libgtk-3-dev
-
-    - name: Cache Go modules
-      uses: actions/cache@v4
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-
-    - name: Instalar dependencias
-      run: go mod download
-
-    - name: Verificar formato de código
-      run: |
-        if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
-          echo "El código no está formateado correctamente:"
-          gofmt -s -l .
-          exit 1
-        fi
-
-    - name: Go vet
-      run: go vet ./...
-
-    - name: Ejecutar tests
-      run: go test -v -race -coverprofile=coverage.out ./...
-
-    - name: Generar reporte de cobertura
-      run: go tool cover -html=coverage.out -o coverage.html
-
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage.out
-        fail_ci_if_error: false
-        token: ${{ secrets.CODECOV_TOKEN }}
-        verbose: true
-      continue-on-error: true
-
-    - name: Upload coverage artifact (backup)
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: |
-          coverage.out
-          coverage.html
-
-  # Security check
-  security:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout código
-      uses: actions/checkout@v4
-
-    - name: Setup Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
-
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libayatana-appindicator3-dev libgtk-3-dev
-
-    - name: Install Gosec
-      run: go install github.com/securego/gosec/v2/cmd/gosec@latest
-
-    - name: Run Gosec Security Scanner
-      run: gosec ./...
-
-  # Build para múltiples plataformas
+  # Build Windows
   build:
-    name: Build
-    needs: [test, security]
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        goos: [linux, windows, darwin]
-        goarch: [amd64]
+    name: Build Windows
+    runs-on: windows-latest
     steps:
     - name: Checkout código
       uses: actions/checkout@v4
@@ -117,41 +23,24 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libayatana-appindicator3-dev libgtk-3-dev
+    - name: Run tests
+      run: go test ./...
 
-    - name: Build binario
-      env:
-        GOOS: ${{ matrix.goos }}
-        GOARCH: ${{ matrix.goarch }}
+    - name: Build Windows executable
       run: |
-        # Para builds de Linux, usamos CGO_ENABLED=1 (necesario para systray)
-        # Para Windows y Darwin, podemos usar CGO_ENABLED=0 para builds estáticos
-        if [ "$GOOS" = "linux" ]; then
-          export CGO_ENABLED=1
-        else
-          export CGO_ENABLED=0
-        fi
-        
-        if [ "$GOOS" = "windows" ]; then
-          go build -ldflags="-s -w" -o notifier-${{ matrix.goos }}-${{ matrix.goarch }}.exe .
-        else
-          go build -ldflags="-s -w" -o notifier-${{ matrix.goos }}-${{ matrix.goarch }} .
-        fi
+        go build -ldflags="-s -w" -o notifier.exe .
 
-    - name: Upload artifacts
+    - name: Upload Windows artifact
       uses: actions/upload-artifact@v4
       with:
-        name: notifier-${{ matrix.goos }}-${{ matrix.goarch }}
-        path: notifier-*
+        name: notifier-windows
+        path: notifier.exe
 
   # Release automático
   release:
     name: Create Release
-    needs: [test, security, build]
-    runs-on: ubuntu-latest
+    needs: [build]
+    runs-on: windows-latest
     if: github.event_name == 'release'
     steps:
     - name: Checkout código
@@ -162,65 +51,13 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    - name: Install system dependencies
+    - name: Build release binary
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libayatana-appindicator3-dev libgtk-3-dev
+        go build -ldflags="-s -w" -o notifier.exe .
 
-    - name: Download artifacts
-      uses: actions/download-artifact@v4
-
-    - name: Build release binaries
-      run: |
-        # Windows (CGO_ENABLED=0 para build estático)
-        CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o notifier-windows-amd64.exe .
-        # Linux (CGO_ENABLED=1 necesario para systray)
-        CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o notifier-linux-amd64 .
-        # macOS (CGO_ENABLED=0 para build estático)
-        CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o notifier-darwin-amd64 .
-
-    - name: Create release packages
-      run: |
-        # Crear directorios
-        mkdir -p release/windows release/linux release/macos
-        
-        # Windows package
-        cp notifier-windows-amd64.exe release/windows/
-        cp README.md LICENSE CHANGELOG.md release/windows/
-        cd release && tar -czf notifier-windows-amd64.tar.gz windows/ && cd ..
-        
-        # Linux package
-        cp notifier-linux-amd64 release/linux/
-        cp README.md LICENSE CHANGELOG.md release/linux/
-        cd release && tar -czf notifier-linux-amd64.tar.gz linux/ && cd ..
-        
-        # macOS package
-        cp notifier-darwin-amd64 release/macos/
-        cp README.md LICENSE CHANGELOG.md release/macos/
-        cd release && tar -czf notifier-darwin-amd64.tar.gz macos/ && cd ..
-
-    - name: Upload release assets
+    - name: Upload release asset
       uses: softprops/action-gh-release@v1
       with:
-        files: |
-          release/*.tar.gz
-          notifier-windows-amd64.exe
-          notifier-linux-amd64
-          notifier-darwin-amd64
+        files: notifier.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # Notification de Slack/Discord (opcional)
-  notify:
-    name: Notify Success
-    needs: [test, security, build]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-    - name: Notify success
-      if: needs.test.result == 'success' && needs.build.result == 'success'
-      run: echo "✅ Pipeline completado exitosamente"
-    
-    - name: Notify failure
-      if: needs.test.result == 'failure' || needs.build.result == 'failure'
-      run: echo "❌ Pipeline falló"
