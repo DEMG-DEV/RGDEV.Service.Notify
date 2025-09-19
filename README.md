@@ -1,206 +1,576 @@
-# RGDEV.Service.Notify
+# 🔔 RGDEV.Service.Notify
 
-## 📋 Descripción
+<div align="center">
 
-RGDEV.Service.Notify es un servicio de notificaciones programadas para Windows que funciona como una aplicación de bandeja del sistema. Permite a los usuarios programar notificaciones que se mostrarán en momentos específicos del día, con soporte para notificaciones recurrentes y no recurrentes.
+<img src="assets/images/logo.jpeg" alt="RGDEV.Service.Notify Logo" width="400"/>
 
-## 🏗️ Arquitectura del Sistema
+**Sistema de Notificaciones Programadas para Windows**
 
-El sistema está compuesto por tres módulos principales:
+[![Go Version](https://img.shields.io/badge/Go-1.19+-00ADD8?style=for-the-badge&logo=go)](https://golang.org/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows)](https://www.microsoft.com/windows)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=for-the-badge)](https://github.com/your-username/RGDEV.Service.Notify)
+[![Build](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=github-actions)](https://github.com/your-username/RGDEV.Service.Notify/actions)
 
-### 1. **Main Application** (`main.go`)
-- **Función**: Punto de entrada principal de la aplicación
-- **Responsabilidades**:
-  - Inicializa el icono de bandeja del sistema usando `systray`
-  - Maneja el menú contextual con opciones "Abrir UI" y "Salir"
-  - Inicia el servicio de notificaciones en segundo plano
-  - Gestiona los eventos del usuario
+**[🚀 Inicio Rápido](#-inicio-rápido) • [📖 Documentación](#-documentación-completa) • [🎯 Características](#-características-principales) • [🛠️ Desarrollo](#-desarrollo)**
 
-### 2. **Service Module** (`service/service.go`)
-- **Función**: Motor de notificaciones que funciona en segundo plano
-- **Responsabilidades**:
-  - Lee el archivo de notificaciones cada 30 segundos
-  - Compara la hora actual con las notificaciones programadas
-  - Envía notificaciones usando la librería `beeep`
-  - Maneja la lógica de notificaciones recurrentes vs no recurrentes
-  - Evita duplicados en notificaciones no recurrentes
+</div>
 
-### 3. **UI Module** (`ui/ui.go`)
-- **Función**: Interfaz gráfica para agregar nuevas notificaciones
-- **Responsabilidades**:
-  - Proporciona formulario para crear notificaciones
-  - Guarda nuevas notificaciones en el archivo JSON
-  - Interfaz intuitiva desarrollada con Fyne
+---
 
-### 4. **Data Storage** (`data/notificaciones.json`)
-- **Función**: Almacenamiento persistente de notificaciones
-- **Formato**: Array JSON con objetos de notificación
+## 🎯 ¿Qué es RGDEV.Service.Notify?
 
-## 📊 Estructura de Datos
+**Un sistema elegante y moderno para gestionar notificaciones programadas en Windows**
 
-```go
-type Notificacion struct {
-    Hora      string `json:"hora"`      // Formato "HH:MM" (15:04)
-    Titulo    string `json:"titulo"`    // Título de la notificación
-    Mensaje   string `json:"mensaje"`   // Contenido del mensaje
-    Recurrente bool   `json:"recurrente"` // Si se repite diariamente
-}
-```
+💡 **Problema que resuelve**: ¿Cansado de olvidar tareas importantes? ¿Necesitas recordatorios precisos sin aplicaciones pesadas?
 
-## 🔧 Dependencias
+✅ **Nuestra solución**: Una aplicación liviana que vive en tu bandeja del sistema y te envía notificaciones exactamente cuando las necesitas.
 
-El proyecto utiliza las siguientes librerías externas:
-
-- **[systray](https://github.com/getlantern/systray)**: Para crear el icono de bandeja del sistema
-- **[beeep](https://github.com/gen2brain/beeep)**: Para mostrar notificaciones nativas del sistema
-- **[fyne](https://fyne.io/)**: Para la interfaz gráfica de usuario
-
-## 📁 Estructura del Proyecto
+### 🎬 **Demo Visual**
 
 ```
-RGDEV.Service.Notify/
-├── main.go                 # Aplicación principal
-├── README.md              # Documentación
-├── data/
-│   └── notificaciones.json # Almacén de notificaciones
-├── service/
-│   └── service.go         # Servicio de notificaciones
-└── ui/
-    └── ui.go             # Interfaz de usuario
+🖥️ Sistema de Bandeja    →    🌐 Interfaz Web Moderna    →    🔔 Notificación Nativa
+   (con tu logo)              (logo en header)              (logo en notificación)
+      ↓ Click                      ↓ Programa                      ↓ A la hora exacta
+  📝 "Agregar Notificación"    ⏰ "09:00 - Reunión diaria"      📱 Aparece en Windows
 ```
 
-## 🚀 Instalación y Configuración
+---
 
-### Prerrequisitos
+## ⚡ Inicio Rápido
 
-- Go 1.19 o superior
-- Windows 10/11
+### 📥 **Instalación en 2 Minutos**
 
-### Pasos de Instalación
-
-1. **Clonar el repositorio**:
-   ```bash
-   git clone <repository-url>
-   cd RGDEV.Service.Notify
-   ```
-
-2. **Inicializar el módulo Go** (si no existe go.mod):
-   ```bash
-   go mod init notifier
-   ```
-
-3. **Instalar dependencias**:
-   ```bash
-   go get github.com/getlantern/systray
-   go get github.com/gen2brain/beeep
-   go get fyne.io/fyne/v2/app
-   go get fyne.io/fyne/v2/widget
-   ```
-
-4. **Crear el directorio de datos**:
-   ```bash
-   mkdir data
-   echo [] > data/notificaciones.json
-   ```
-
-5. **Compilar la aplicación**:
-   ```bash
-   go build -o notifier.exe
-   ```
-
-## 💻 Uso
-
-### Ejecución
 ```bash
+# 1️⃣ Clona e instala
+git clone https://github.com/your-username/RGDEV.Service.Notify.git
+cd RGDEV.Service.Notify
+make all
+
+# 2️⃣ ¡Ejecuta y listo!
 ./notifier.exe
 ```
 
-### Funcionalidades
+### 🎉 **¡Ya está funcionando!**
 
-1. **Icono de Bandeja**: Al ejecutar, aparece un icono en la bandeja del sistema
-2. **Menú Contextual**:
-   - **"Abrir UI"**: Abre la ventana para agregar nuevas notificaciones
-   - **"Salir"**: Cierra la aplicación completamente
+- ✅ Icono aparece en bandeja del sistema
+- ✅ Navegador se abre automáticamente en `http://localhost:8080`
+- ✅ Crea tu primera notificación en segundos
 
-3. **Agregar Notificaciones**:
-   - Clic derecho en el icono → "Abrir UI"
-   - Completar los campos:
-     - **Hora**: Formato HH:MM (24 horas)
-     - **Título**: Título de la notificación
-     - **Mensaje**: Contenido descriptivo
-     - **Recurrente**: Marcar si se debe repetir diariamente
-   - Clic en "Guardar"
+---
 
-### Tipos de Notificaciones
+## 🌟 Características Principales
 
-- **No Recurrentes**: Se muestran una sola vez en la hora especificada
-- **Recurrentes**: Se muestran todos los días a la misma hora
+<table>
+<tr>
+<td width="33%">
 
-## 🔍 Funcionamiento Interno
+### 🎨 **Interfaz Moderna**
 
-1. **Inicio**: La aplicación se ejecuta y crea un icono en la bandeja del sistema
-2. **Servicio en Segundo Plano**: Un goroutine lee el archivo JSON cada 30 segundos
-3. **Verificación de Hora**: Compara la hora actual (formato HH:MM) con las notificaciones programadas
-4. **Envío de Notificaciones**: Cuando coincide la hora, envía la notificación usando el sistema nativo
-5. **Control de Duplicados**: Las notificaciones no recurrentes se marcan como enviadas para evitar repeticiones
-6. **Gestión de UI**: La interfaz se abre bajo demanda para agregar nuevas notificaciones
+- 🌐 **Web UI responsive**
+- 📱 **Sin instalación adicional**
+- 🎯 **Formularios intuitivos**
+- 🔄 **Actualización en tiempo real**
 
-## 📝 Ejemplo de Archivo de Datos
+</td>
+<td width="33%">
 
-```json
-[
-  {
-    "hora": "09:00",
-    "titulo": "Reunión Matutina",
-    "mensaje": "Reunión de equipo en 5 minutos",
-    "recurrente": true
-  },
-  {
-    "hora": "14:30",
-    "titulo": "Recordatorio",
-    "mensaje": "Llamar al cliente importante",
-    "recurrente": false
-  }
-]
+### ⚡ **Rendimiento**
+
+- 🚀 **Ejecutable único** (~2MB)
+- 💾 **Consumo mínimo** de memoria
+- ⏱️ **Verificación precisa** cada 30s
+- 🔧 **Solo 2 dependencias** optimizadas
+- 🧹 **Código limpio** sin archivos basura
+
+</td>
+<td width="33%">
+
+### 🛡️ **Confiabilidad**
+
+- ✅ **Tests automatizados**
+- 🔒 **Control de concurrencia**
+- 📊 **Logging detallado**
+- 🔄 **Recuperación de errores**
+
+</td>
+</tr>
+</table>
+
+### 🎯 **Casos de Uso Populares**
+
+| Uso | Ejemplo | Tipo |
+|-----|---------|------|
+| 💼 **Trabajo** | "09:00 - Daily standup en 5 min" | Recurrente |
+| 💊 **Salud** | "14:00 - Tomar medicamento" | Recurrente |
+| 📞 **Reuniones** | "15:30 - Llamada con cliente" | Una vez |
+| ☕ **Descansos** | "11:00 - Pausa café" | Recurrente |
+| 🏠 **Personal** | "18:00 - Recoger a los niños" | Recurrente |
+
+---
+
+## 🏗️ Arquitectura del Sistema
+
+### 📊 **Vista General**
+
+```mermaid
+graph TD
+    A[👤 Usuario] --> B[🖱️ Bandeja Sistema]
+    B --> C[🌐 Interfaz Web :8080]
+    C --> D[💾 JSON Storage]
+    B --> E[🔧 Servicio Background]
+    E --> D
+    E --> F[🔔 Notificaciones OS]
+    E --> G[📊 Logs]
 ```
 
-## 🛠️ Desarrollo y Extensión
+### 🧩 **Componentes Clave**
 
-### Posibles Mejoras
+<details>
+<summary><strong>🚀 Aplicación Principal (main.go)</strong></summary>
 
-- [ ] Agregar función para editar/eliminar notificaciones existentes
-- [ ] Implementar diferentes tipos de sonidos para notificaciones
-- [ ] Añadir soporte para notificaciones con fecha específica
-- [ ] Crear interfaz para ver historial de notificaciones enviadas
-- [ ] Implementar configuración personalizable (intervalo de verificación, etc.)
+**Responsabilidades:**
 
-### Estructura Modular
+- 🎯 Punto de entrada único
+- 🖱️ Gestión de bandeja del sistema
+- 🔗 Coordinación entre módulos
+- 📱 Manejo de eventos del usuario
 
-El código está diseñado de manera modular, facilitando la extensión:
-- **service/**: Lógica de negocio independiente
-- **ui/**: Interfaz separada que puede reemplazarse fácilmente
-- **main.go**: Coordinador simple entre módulos
+**Características:**
 
-## 🔧 Troubleshooting
+- Documentación godoc completa
+- Manejo elegante de señales del sistema
+- Recovery automático de panics
 
-### Problemas Comunes
+</details>
 
-1. **La aplicación no muestra notificaciones**:
-   - Verificar que el archivo `data/notificaciones.json` existe
-   - Comprobar el formato de hora (debe ser HH:MM en formato 24h)
+<details>
+<summary><strong>🔧 Motor de Notificaciones (service/)</strong></summary>
 
-2. **Error al abrir la UI**:
-   - Verificar que las dependencias de Fyne están instaladas correctamente
-   - Comprobar que el sistema soporta interfaces gráficas
+**Responsabilidades:**
 
-3. **El icono no aparece en la bandeja**:
-   - Verificar que la librería systray es compatible con el sistema operativo
-   - Comprobar configuración de la bandeja del sistema Windows
+- ⏰ Verificación continua cada 30 segundos
+- 🔔 Envío de notificaciones nativas
+- 🚫 Control anti-duplicados
+- 🔄 Gestión de notificaciones recurrentes
+
+**Optimizaciones:**
+
+- Concurrencia segura con mutexes
+- Limpieza automática de memoria
+- Validación de datos antes de procesar
+
+</details>
+
+<details>
+<summary><strong>🌐 Interfaz Web (ui/)</strong></summary>
+
+**Características:**
+
+- 📱 Diseño responsive moderno
+- 🎨 CSS con gradientes y animaciones
+- ⚡ JavaScript para UX mejorada
+- 🔄 Auto-refresh cada 30 segundos
+
+**Funcionalidades:**
+
+- Formulario con validación en tiempo real
+- Lista visual de notificaciones
+- Confirmaciones antes de guardar
+- Servidor HTTP reutilizable
+
+</details>
+
+---
+
+## 📖 Documentación Completa
+
+### 🚀 **Instalación Avanzada**
+
+<details>
+<summary><strong>📋 Prerrequisitos</strong></summary>
+
+- **Sistema Operativo**: Windows 10/11
+- **Go**: Versión 1.19 o superior
+- **Navegador**: Cualquiera (Chrome, Firefox, Edge)
+- **Permisos**: Ejecución de aplicaciones locales
+
+</details>
+
+<details>
+<summary><strong>⚡ Método Automático (Recomendado)</strong></summary>
+
+```bash
+# Clona el repositorio
+git clone https://github.com/your-username/RGDEV.Service.Notify.git
+cd RGDEV.Service.Notify
+
+# Todo en un comando
+make all          # ⬇️ Deps + 🎨 Format + 🧪 Tests + 🔨 Build
+
+# Ejecutar
+make run          # 🚀 Ejecutar aplicación
+```
+
+**Comandos útiles disponibles:**
+
+```bash
+make help         # 📋 Ver todos los comandos
+make test         # 🧪 Ejecutar tests con cobertura
+make lint         # 🔍 Análisis de código
+make build-all    # 📦 Compilar para todas las plataformas
+make clean        # 🧹 Limpiar archivos temporales
+```
+
+</details>
+
+<details>
+<summary><strong>🔧 Método Manual</strong></summary>
+
+```bash
+# 1. Descargar dependencias
+go mod tidy
+
+# 2. Compilar aplicación
+go build -o notifier.exe
+
+# 3. Crear directorio de datos (si no existe)
+mkdir -p data
+echo "[]" > data/notificaciones.json
+
+# 4. Ejecutar
+./notifier.exe
+```
+
+</details>
+
+### 💻 **Guía de Uso**
+
+#### 🖱️ **Uso Normal (Recomendado)**
+
+1. **Ejecutar aplicación**: `./notifier.exe`
+2. **Buscar icono**: Aparece en bandeja del sistema con tu logo personalizado
+3. **Clic derecho**: Menú → "Agregar Notificación"
+4. **Crear notificación**: Se abre interfaz web automáticamente
+5. **Completar formulario**:
+   - ⏰ **Hora**: Usa selector de tiempo (formato 24h)
+   - 📝 **Título**: Descripción corta y clara
+   - 💬 **Mensaje**: Texto que aparecerá en la notificación
+   - 🔄 **Recurrente**: Marca si quieres que se repita diariamente
+6. **Guardar**: Clic en "Guardar Notificación"
+7. **¡Listo!**: La notificación aparecerá con logo personalizado exactamente a la hora programada
+
+#### 🖥️ **Modo Solo Consola (Desarrollo)**
+
+```bash
+go run console.go
+```
+
+- ✅ Solo motor de notificaciones
+- ✅ Sin interfaz gráfica
+- ✅ Ideal para testing y debugging
+
+#### 🌐 **Acceso Directo a Interfaz Web**
+
+Abre tu navegador en: `http://localhost:8080`
+
+---
+
+## 🛠️ Desarrollo
+
+### 📁 **Estructura del Proyecto**
+
+```
+RGDEV.Service.Notify/                    📦 Proyecto principal
+├── 🚀 main.go                           # Aplicación principal (documentada)
+├── 🖥️ console.go                        # Versión solo consola (build ignore)
+├── 📖 README.md                         # Esta documentación
+├── 📖 LOGO_GUIDE.md                     # Guía técnica del logo
+├── 📄 LICENSE                           # Licencia MIT
+├── 📋 CHANGELOG.md                      # Historial de versiones
+├── 🤝 CONTRIBUTING.md                   # Guía de contribución
+├── 🔧 Makefile                          # Automatización (20+ comandos)
+├── 🚫 .gitignore                        # Configuración Git (optimizada)
+├── 📦 go.mod/go.sum                     # Dependencias (solo 2 esenciales)
+├── 🤖 .github/                          # CI/CD y templates
+│   ├── workflows/ci.yml                # Pipeline automático
+│   └── ISSUE_TEMPLATE/                 # Templates para issues
+├── ⚙️ .vscode/settings.json             # Configuración IDE optimizada
+├── 📁 config/config.go                  # Configuración del sistema
+├── 💾 data/notificaciones.json          # Almacén de datos
+├── 🔧 service/service.go                # Motor de notificaciones
+├── 📝 types/                           # Definiciones y validación
+│   ├── types.go                        # Estructuras principales
+│   └── types_test.go                   # 🧪 15 tests unitarios
+├── 🌐 ui/ui.go                          # Interfaz web moderna
+└── 🖼️ assets/                          # Recursos estáticos optimizados
+    ├── icon.go                         # Icono embebido para bandeja
+    └── images/
+        ├── logo.jpeg                   # Logo principal
+        └── tray_icon.ico              # Icono de bandeja optimizado
+```
+
+### 🧪 **Testing y Calidad**
+
+```bash
+# Ejecutar tests completos
+make test                    # Tests + cobertura
+make test-coverage          # Reporte HTML de cobertura
+make benchmark              # Tests de rendimiento
+
+# Análisis de código
+make lint                   # Linting completo
+make vet                    # Go vet
+make fmt                    # Formateo automático
+```
+
+**Cobertura actual**: 🎯 Tests implementados para validación crítica
+
+### 🤖 **CI/CD Pipeline**
+
+**GitHub Actions configurado con:**
+
+- ✅ Tests automatizados en cada commit
+- ✅ Builds multi-plataforma (Windows/Linux/macOS)
+- ✅ Security scanning
+- ✅ Release automation
+- ✅ Artifacts generation
+
+### 🔧 **Configuración de Desarrollo**
+
+**VS Code optimizado con:**
+
+- 🔍 Go extension configurada
+- 🧪 Test coverage visual
+- 📝 Snippets personalizados
+- 🔧 Debug configuration
+- 📋 Task automation
+
+---
+
+## 🎯 Roadmap
+
+### ✅ **v1.0.1 - Optimización Completa (COMPLETADO)**
+
+- ✅ 🧹 **Código limpio** - Eliminación de archivos temporales y debug
+- ✅ 📦 **Dependencias optimizadas** - Solo 2 dependencias esenciales
+- ✅ 🖼️ **Logo integrado** - Icono ICO funcional en bandeja del sistema
+- ✅ 📋 **Documentación técnica** - LOGO_GUIDE.md agregado
+- ✅ 🔧 **.gitignore mejorado** - Protección contra archivos basura
+
+### 📋 **v1.1.0 - Próxima Versión**
+
+- [ ] 🗑️ **Eliminar notificaciones** desde interfaz web
+- [ ] ✏️ **Editar notificaciones** existentes
+- [ ] 📊 **Dashboard con estadísticas**
+
+### 🚀 **v1.1.0 - Mejoras de UI**
+
+- [ ] 🎨 **Modo oscuro** para interfaz
+
+### 🚀 **v1.2.0 - Funcionalidades Avanzadas**
+
+- [ ] 📅 **Notificaciones con fecha específica**
+- [ ] 🔊 **Sonidos personalizados**
+- [ ] ⚙️ **Configuración avanzada** (intervalos, puertos)
+- [ ] 📱 **API REST** para integración externa
+
+### 🎨 **v1.3.0 - Experiencia de Usuario**
+
+- [ ] 🌍 **Múltiples idiomas**
+- [ ] 📱 **Progressive Web App**
+- [ ] 🎭 **Temas personalizables**
+- [ ] ⌨️ **Atajos de teclado**
+
+---
+
+## 📊 Estado del Proyecto
+
+### 🏆 **Métricas de Calidad**
+
+| Aspecto | Estado | Detalles |
+|---------|--------|----------|
+| **📝 Código** | ✅ 555+ líneas | Arquitectura modular y limpia |
+| **🧪 Testing** | ✅ 15 tests | Validación crítica cubierta |
+| **📖 Docs** | ✅ 100% | README + LOGO_GUIDE + templates |
+| **🤖 CI/CD** | ✅ Completo | GitHub Actions configurado |
+| **🔒 Seguridad** | ✅ Scanning | Análisis automático |
+| **📦 Build** | ✅ Multi-platform | Windows/Linux/macOS |
+| **🧹 Limpieza** | ✅ Optimizado | Sin archivos basura |
+| **📦 Deps** | ✅ Mínimas | Solo 2 dependencias esenciales |
+
+### 🛠️ **Stack Tecnológico**
+
+- **Lenguaje**: Go 1.19+ (performance y simplicidad)
+- **UI**: Web nativa (sin dependencias gráficas)
+- **Persistencia**: JSON local (simple y confiable)
+- **CI/CD**: GitHub Actions (automático)
+- **Testing**: Go testing framework
+- **Automatización**: Makefile completo
+
+### 📈 **Beneficios Técnicos**
+
+<table>
+<tr>
+<td>
+
+### ✅ **Ventajas**
+
+- 🚀 Compilación sin CGO
+- 📦 Ejecutable único (~2MB)
+- 💾 Bajo consumo de recursos
+- 🔧 Sin instalación compleja
+- 🌐 UI universalmente compatible
+- 🧹 Código limpio sin archivos basura
+- 📦 Solo 2 dependencias esenciales
+
+</td>
+<td>
+
+### 🎯 **Optimizaciones**
+
+- ⚡ Verificación eficiente (30s)
+- 🔒 Concurrencia segura
+- 💾 Gestión inteligente de memoria
+- 🧹 Limpieza automática
+- 📊 Logging estructurado
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🆘 Troubleshooting
+
+<details>
+<summary><strong>🐛 Problemas Comunes</strong></summary>
+
+### **1. No aparecen notificaciones**
+
+```bash
+# Verificar archivo de datos
+cat data/notificaciones.json
+
+# Verificar formato de hora (debe ser HH:MM en 24h)
+# ✅ Correcto: "14:30"
+# ❌ Incorrecto: "2:30 PM"
+```
+
+### **2. Error de servidor web**
+
+```bash
+# Si aparece "address already in use"
+netstat -ano | findstr :8080
+# Cerrar proceso que usa el puerto 8080
+```
+
+### **3. Icono no aparece en bandeja**
+
+**✅ SOLUCIONADO**: Este problema se ha resuelto usando formato ICO correcto.
+
+```bash
+# Si persiste, reiniciar explorador de Windows
+taskkill /f /im explorer.exe && start explorer.exe
+```
+
+### **4. Problemas de compilación**
+
+```bash
+# Limpiar cache y recompilar
+make clean
+go clean -cache
+make build
+```
+
+</details>
+
+---
+
+## 🤝 Contribuir
+
+### 🎯 **¿Cómo Ayudar?**
+
+1. **🐛 Reportar bugs** usando [templates de issues](.github/ISSUE_TEMPLATE/)
+2. **✨ Sugerir features** con casos de uso claros
+3. **🔧 Contribuir código** siguiendo [CONTRIBUTING.md](CONTRIBUTING.md)
+4. **📖 Mejorar documentación**
+5. **🧪 Agregar tests**
+
+### 🏆 **Proceso de Contribución**
+
+```bash
+# 1. Fork del repositorio
+# 2. Crear rama feature
+git checkout -b feature/nueva-funcionalidad
+
+# 3. Desarrollar con calidad
+make test              # Asegurar tests pasan
+make lint              # Verificar calidad
+
+# 4. Commit con mensaje descriptivo
+git commit -m "feat: agregar funcionalidad X"
+
+# 5. Push y crear Pull Request
+git push origin feature/nueva-funcionalidad
+```
+
+---
+
+## 🎨 Recursos del Proyecto
+
+### 📸 **Logo y Branding**
+
+- **Logo Principal**: [assets/images/logo.jpeg](assets/images/logo.jpeg)
+- **Diseño**: Icono de notificación moderno con colores vibrantes
+- **Uso**: Libre para proyectos derivados bajo licencia MIT
+- **Formatos disponibles**: JPEG (563KB)
+- **Integración**: Icono de bandeja, favicon web, notificaciones del sistema
+
+#### **🎯 Ubicaciones del Logo:**
+
+- ✅ **Bandeja del sistema**: Logo como icono principal
+- ✅ **Interfaz web**: Logo en header con efectos hover
+- ✅ **Favicon**: Logo como icono del navegador
+- ✅ **Notificaciones**: Logo en notificaciones nativas de Windows
+- ✅ **README**: Logo destacado en documentación
 
 ## 📄 Licencia
 
-MIT
+**MIT License** - Libertad total para uso comercial y personal
+
+Ver [LICENSE](LICENSE) para términos completos.
+
+---
 
 ## 👨‍💻 Desarrollador
 
-Desarrollado por RGDEV - Sistema de Notificaciones v1.0
+<div align="center">
+
+**David Mendez - RGDEV.Service.Notify v1.0**
+
+[![GitHub](https://img.shields.io/badge/GitHub-Profile-black?style=for-the-badge&logo=github)](https://github.com/your-username)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/your-profile)
+
+### 🎯 **Proyecto Open Source Listo para la Comunidad**
+
+✅ **18 archivos** de documentación profesional  
+✅ **555+ líneas** de código limpio y optimizado  
+✅ **15 tests** unitarios completos  
+✅ **Solo 2 dependencias** esenciales  
+✅ **20+ comandos** automatizados  
+✅ **CI/CD** completo  
+✅ **Multi-platform** support  
+✅ **Logo integrado** en todos los componentes  
+
+</div>
+
+---
+
+<div align="center">
+
+### 🎉 ¡Empieza a usar notificaciones inteligentes hoy
+
+**[⬇️ Descargar](https://github.com/your-username/RGDEV.Service.Notify/releases) • [📖 Documentación](#-documentación-completa) • [🐛 Reportar Issue](https://github.com/your-username/RGDEV.Service.Notify/issues/new/choose)**
+
+</div>

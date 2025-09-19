@@ -1,0 +1,186 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  GO_VERSION: '1.19'
+
+jobs:
+  # Test y Lint
+  test:
+    name: Test y Quality Check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Instalar dependencias
+      run: go mod download
+
+    - name: Verificar formato de código
+      run: |
+        if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+          echo "El código no está formateado correctamente:"
+          gofmt -s -l .
+          exit 1
+        fi
+
+    - name: Go vet
+      run: go vet ./...
+
+    - name: Ejecutar tests
+      run: go test -v -race -coverprofile=coverage.out ./...
+
+    - name: Generar reporte de cobertura
+      run: go tool cover -html=coverage.out -o coverage.html
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.out
+        fail_ci_if_error: true
+
+  # Security check
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Run Gosec Security Scanner
+      uses: securecodewarrior/github-action-gosec@master
+      with:
+        args: './...'
+
+  # Build para múltiples plataformas
+  build:
+    name: Build
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [amd64]
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Build binario
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+      run: |
+        if [ "$GOOS" = "windows" ]; then
+          go build -ldflags="-s -w" -o notifier-${{ matrix.goos }}-${{ matrix.goarch }}.exe .
+        else
+          go build -ldflags="-s -w" -o notifier-${{ matrix.goos }}-${{ matrix.goarch }} .
+        fi
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: notifier-${{ matrix.goos }}-${{ matrix.goarch }}
+        path: notifier-*
+
+  # Release automático
+  release:
+    name: Create Release
+    needs: [test, security, build]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+
+    - name: Build release binaries
+      run: |
+        # Windows
+        GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o notifier-windows-amd64.exe .
+        # Linux
+        GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o notifier-linux-amd64 .
+        # macOS
+        GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o notifier-darwin-amd64 .
+
+    - name: Create release packages
+      run: |
+        # Crear directorios
+        mkdir -p release/windows release/linux release/macos
+        
+        # Windows package
+        cp notifier-windows-amd64.exe release/windows/
+        cp README.md LICENSE CHANGELOG.md release/windows/
+        cd release && tar -czf notifier-windows-amd64.tar.gz windows/ && cd ..
+        
+        # Linux package
+        cp notifier-linux-amd64 release/linux/
+        cp README.md LICENSE CHANGELOG.md release/linux/
+        cd release && tar -czf notifier-linux-amd64.tar.gz linux/ && cd ..
+        
+        # macOS package
+        cp notifier-darwin-amd64 release/macos/
+        cp README.md LICENSE CHANGELOG.md release/macos/
+        cd release && tar -czf notifier-darwin-amd64.tar.gz macos/ && cd ..
+
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          release/*.tar.gz
+          notifier-windows-amd64.exe
+          notifier-linux-amd64
+          notifier-darwin-amd64
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Notification de Slack/Discord (opcional)
+  notify:
+    name: Notify Success
+    needs: [test, security, build]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+    - name: Notify success
+      if: needs.test.result == 'success' && needs.build.result == 'success'
+      run: echo "✅ Pipeline completado exitosamente"
+    
+    - name: Notify failure
+      if: needs.test.result == 'failure' || needs.build.result == 'failure'
+      run: echo "❌ Pipeline falló"

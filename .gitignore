@@ -1,0 +1,189 @@
+# Binarios compilados de Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Archivos de test
+*.test
+
+# Archivos de cobertura de salida
+*.out
+
+# Archivos de Go workspace
+go.work
+go.work.sum
+
+# Binarios específicos del proyecto
+notifier.exe
+notifier
+rgdev-notifier*
+
+# Archivos de configuración específicos del entorno
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Datos temporales y logs
+*.log
+*.tmp
+*.temp
+logs/
+
+# Archivos temporales de debug y desarrollo
+*.debug
+debug_*
+temp_*
+test_*.go
+create_*.go
+convert_*.ps1
+fix_*.ps1
+simple_*.ps1
+temp/
+
+# Archivos de backup
+*.bak
+*.backup
+*~
+
+# Archivos del sistema operativo
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Linux
+*~
+.nfs*
+
+# Editores e IDEs
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IntelliJ IDEA / GoLand
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Archivos de dependencias y módulos
+vendor/
+node_modules/
+
+# Archivos de documentación generados automáticamente
+docs/build/
+*.pdf
+*.html
+
+# Archivos de configuración local del desarrollador
+config.local.json
+settings.local.json
+
+# Archivos de profiling
+*.prof
+*.pprof
+
+# Archivos de debugging
+debug
+*.debug
+
+# Certificados y claves privadas
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+
+# Archivos de base de datos local (si se agregan en el futuro)
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de cache
+.cache/
+*.cache
+
+# Directorios de build específicos
+build/
+dist/
+bin/
+target/
+
+# Archivos específicos del proyecto que pueden ser sensibles
+# (descomenta si necesitas ignorar el archivo de notificaciones)
+# data/notificaciones.json
+
+# Mantener directorio de assets pero ignorar archivos temporales
+!assets/
+!assets/images/
+assets/temp/
+assets/*.tmp
+
+# Archivos de configuración de CI/CD específicos del entorno
+.github/workflows/secrets.yml
+
+# Archivos de Docker (si se agregan en el futuro)
+Dockerfile.local
+docker-compose.override.yml
+.dockerignore.local
+
+# Archivos de monitoreo y métricas
+metrics/
+monitoring/
+
+# Archivos de respaldo automático
+*.orig
+*.rej
+
+# Archivos temporales de Git
+*.patch
+*.diff
+
+# Archivos de configuración específicos de Windows
+desktop.ini
+ehthumbs_vista.db

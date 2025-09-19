@@ -1,0 +1,14 @@
+[
+  {
+    "hora": "14:10",
+    "titulo": "🎉 Prueba Web UI",
+    "mensaje": "¡La nueva interfaz web está funcionando perfectamente!",
+    "recurrente": false
+  },
+  {
+    "hora": "14:11",
+    "titulo": "📅 Recordatorio Diario",
+    "mensaje": "Esta es una notificación recurrente de ejemplo",
+    "recurrente": true
+  }
+]
