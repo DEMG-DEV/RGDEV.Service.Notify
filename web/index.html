@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGDEV Notificador - Sistema de Notificaciones Programadas</title>
+    <meta name="description"
+        content="Sistema profesional de notificaciones programadas para Windows. Ejecuta en segundo plano con interfaz web moderna.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-bell"></i>
+                    <span>RGDEV Notificador</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#features">Características</a></li>
+                    <li><a href="#download">Descargar</a></li>
+                    <li><a href="#docs">Documentación</a></li>
+                    <li><a href="#contact">Contacto</a></li>
+                </ul>
+                <div class="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Sistema de Notificaciones Programadas</h1>
+                    <p class="hero-subtitle">Mantente organizado con notificaciones automáticas que se ejecutan en
+                        segundo plano. Interfaz web moderna, sin complicaciones.</p>
+                    <div class="hero-buttons">
+                        <a href="#download" class="btn btn-primary">
+                            <i class="fas fa-download"></i>
+                            Descargar Gratis
+                        </a>
+                        <a href="#features" class="btn btn-secondary">
+                            <i class="fas fa-play"></i>
+                            Ver Demo
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Gratis</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Configuración</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Funcionamiento</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="app-preview">
+                        <div class="window">
+                            <div class="window-header">
+                                <div class="window-controls">
+                                    <span class="control close"></span>
+                                    <span class="control minimize"></span>
+                                    <span class="control maximize"></span>
+                                </div>
+                                <span class="window-title">RGDEV Notificador</span>
+                            </div>
+                            <div class="window-content">
+                                <div class="notification-preview">
+                                    <div class="notification">
+                                        <i class="fas fa-bell notification-icon"></i>
+                                        <div class="notification-content">
+                                            <h4>Reunión de equipo</h4>
+                                            <p>En 15 minutos - Sala de conferencias</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Características Principales</h2>
+                <p>Todo lo que necesitas para mantenerte organizado</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h3>Ejecución en Segundo Plano</h3>
+                    <p>Se ejecuta silenciosamente sin ventanas molestas. Solo aparece en la bandeja del sistema cuando
+                        lo necesitas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Interfaz Web Moderna</h3>
+                    <p>Gestiona tus notificaciones desde una interfaz web elegante y fácil de usar. Sin instalaciones
+                        adicionales.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Notificaciones Programadas</h3>
+                    <p>Programa notificaciones para momentos específicos del día. Soporte para notificaciones
+                        recurrentes y únicas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-save"></i>
+                    </div>
+                    <h3>Almacenamiento Persistente</h3>
+                    <p>Tus notificaciones se guardan automáticamente. No perderás nada aunque reinicies tu computadora.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h3>Notificaciones Nativas</h3>
+                    <p>Integración completa con el sistema de notificaciones de Windows. Aparecen como notificaciones
+                        del sistema.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-feather"></i>
+                    </div>
+                    <h3>Ligero y Rápido</h3>
+                    <p>Consume mínimos recursos del sistema. Desarrollado en Go para máximo rendimiento y eficiencia.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Cómo Funciona</h2>
+                <p>Tres simples pasos para empezar</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Descargar e Instalar</h3>
+                        <p>Descarga el ejecutable y ejecútalo. Se instalará automáticamente en la bandeja del sistema.
+                        </p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Configurar Notificaciones</h3>
+                        <p>Haz clic en el icono de la bandeja y selecciona "Agregar Notificación" para abrir la interfaz
+                            web.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>¡Listo!</h3>
+                        <p>Tus notificaciones se ejecutarán automáticamente en los horarios programados.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download">
+        <div class="container">
+            <div class="download-content">
+                <h2>Descarga RGDEV Notificador</h2>
+                <p>Disponible para Windows. Completamente gratis y de código abierto.</p>
+                <div class="download-buttons">
+                    <a href="https://github.com/DEMG-DEV/RGDEV.Service.Notify/releases/latest" class="btn btn-download"
+                        target="_blank">
+                        <i class="fab fa-windows"></i>
+                        Descargar para Windows
+                        <span class="download-info">Versión más reciente • ~2MB</span>
+                    </a>
+                </div>
+                <div class="download-options">
+                    <a href="https://github.com/DEMG-DEV/RGDEV.Service.Notify" target="_blank">
+                        <i class="fab fa-github"></i>
+                        Ver en GitHub
+                    </a>
+                    <a href="#docs">
+                        <i class="fas fa-book"></i>
+                        Documentación
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-bell"></i>
+                        <span>RGDEV Notificador</span>
+                    </div>
+                    <p>Sistema profesional de notificaciones programadas para Windows.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="https://github.com/DEMG-DEV/RGDEV.Service.Notify">GitHub</a></li>
+                        <li><a href="https://github.com/DEMG-DEV/RGDEV.Service.Notify/releases">Releases</a></li>
+                        <li><a href="https://github.com/DEMG-DEV/RGDEV.Service.Notify/issues">Reportar Bug</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Soporte</h4>
+                    <ul>
+                        <li><a href="https://github.com/DEMG-DEV/RGDEV.Service.Notify/wiki">Documentación</a></li>
+                        <li><a href="https://github.com/DEMG-DEV/RGDEV.Service.Notify/discussions">Comunidad</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 RGDEV. Proyecto de código abierto bajo licencia MIT.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
